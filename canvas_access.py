@@ -44,7 +44,7 @@ def main():
 	
 	# TODO: token for oath, needs to be generated and maybe saved???
 	# right now it can be manually generated in instructure -> account -> settings -> new access token
-	API_KEY = "generate your own"
+	API_KEY = "7236~IY5j1h2ukZT0zfZUjIDoFXDDXYaLbm68ySDAXvVrxUEtH8pWJHyg9BV7f5HZ58zE"
 	
 	# gets current user information
 	user_id_url = API_URL + "/api/v1/users/self"

@@ -6,6 +6,8 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import json
+import sys
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -103,41 +105,80 @@ def main():
 
     #TODO: call function from canvas_access.py
     
-    #TODO: change input of dictonary of courses to dictonary of assignments
-    #should include course name and course id as an entry of assignment, instead of the other way around
+##    rawFile = open('output.txt', 'r')
+####    if rawFile.mode != 'r':
+####        print('reading file failed')
+####        sys.exit()
+####    fromCanvasAccess = rawFile.read()
+##    #print(fromCanvasAccess)
+##
+##    struct = {}
+##    #try:
+##    try: #try parsing to dict
+##        dataform = str(rawFile).strip("'<>() ").replace('\'', '\"')
+##        struct = json.loads(dataform)
+##    except:
+##        #print(repr(response_json))
+##        print(sys.exc_info())
+##    #except:
+##    #    print('error')  
+##    formattedAssignments = []
+##    with open('output_doubleQuotes.txt', 'r') as f:
+##        formattedAssignments = json.load(f)
+##    print(formattedAssignments)
+    
 
-    #TODO: change due date format to adhere to calendar event format
+    ########
+    # Change dictionary from list of courses (with nested list of assignments)
+    # to list of assignments (with nested course attributes)
+    ########
+
+##    formattedAssignments = []
+##    for course in fromCanvasAccess:
+##        currentCourseID = course['id']
+##        currentCourseName = course['name']
+##        for assignment in course['assignments']:
+##            assignmentDict = {
+##                'name': assignment['name'],
+##                'id': assignment['id'],
+##                'due_at': assignment['due_at'],
+##                'course_id': currentCourseID,
+##                'course_name': currentCourseName,
+##            }
+##            formattedAssignments.append(assignmentDict)
 
     ########
     # Create events for the calendar
     ########
 
-    eventsAdded = 0
-    eventsUpdated = 0
-
-    events_result = service.events().list(calendarId='our_CalenderID').execute()
-    existingEvents = events_result.get('items', [])
-
-    for assignment in assignments:
-        for existingEvent in existingEvents:
-            if existingEvent['id'] == assignment['id']: #if assignment already exists in calendar
-                if existingEvent['summary'] != assignment['name']: #if names are different
-                    existingEvent['summary'] = assignment['name']  #change event name to assignment name
-                if existingEvent['start'] != assignment['due_at']: #if dates are different
-                    existingEvent['start'] = assignment['due_at']  #change event date to assignment due date
-                eventsUpdated = 0
-            else: #if assignment doesn't exist in calendar
-                #create a new event based on the assignment attributes
-                event = {
-                    'summary': assignment['course name'] + ': ' + assignment['name']
-                    'start': assignment['due_at']
-                    'end': assignment ['due_at']
-                    'endTimeUnspecified': True
-                    'reminders': 'useDefault': True #could expand to allow user to change this
-                }
-                event = service.events().insert(calendarId=our_calendarID, body=event).execute()
-                #print('Event created: %s', (event.get('htmlLink')))
-                eventsAdded += 1
+##    eventsAdded = 0
+##    eventsUpdated = 0
+##
+##    events_result = service.events().list(calendarId = our_calendarID).execute()
+##    existingEvents = events_result.get('items', [])
+##
+##    for assignment in formattedAssignments:
+##        for existingEvent in existingEvents:
+##            if existingEvent['id'] == assignment['id']: #if assignment already exists in calendar
+##                if existingEvent['summary'] != assignment['name']: #if names are different
+##                    existingEvent['summary'] = assignment['name']  #change event name to assignment name
+##                if existingEvent['start'] != assignment['due_at']: #if dates are different
+##                    existingEvent['start'] = assignment['due_at']  #change event date to assignment due date
+##                eventsUpdated = 0
+##            else: #if assignment doesn't exist in calendar
+##                #create a new event based on the assignment attributes
+##                event = {
+##                    'summary': assignment['course_name'] + ': ' + assignment['name'],
+##                    'start': assignment['due_at'],
+##                    'end': assignment ['due_at'],
+##                    'endTimeUnspecified': True,
+##                    'reminders': {
+##                        'useDefault': True, #could expand to allow user to change this
+##                    },
+##                }
+##                event = service.events().insert(calendarId=our_calendarID, body=event).execute()
+##                #print('Event created: %s', (event.get('htmlLink')))
+##                eventsAdded += 1
 
 if __name__ == '__main__':
     main()
