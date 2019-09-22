@@ -1,0 +1,57 @@
+body {
+  background-color: #c7ba85;
+  color: #785b43;
+  font-family: verdana;
+}
+
+h1 {
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-size: 12px;
+}
+
+div {
+	background-color: #c8ffec;
+	width: 75%;
+	left: 12%;
+	margin-left: -50px;
+	padding: 10px;
+	border-radius: 25px;
+}
+
+#assignmentList {
+	float: center;
+	position: absolute;
+	top: 200px;
+	min-height: 300px;
+}
+
+#buttons {
+	margin-top: 30px;
+	padding: 10px;
+	float: center;
+	position: absolute;
+	top: 100px;
+}
+
+#header {
+	padding: 10px;
+	float: center;
+	position: absolute;
+}
+	
+button {
+	float: center;
+	margin: 5px;
+}
+
+footer {
+	position: bottom;
+}
+
+.right-button {
+	float: right;
+}
