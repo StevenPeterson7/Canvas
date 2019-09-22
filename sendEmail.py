@@ -56,7 +56,7 @@ def main():
     
     # TODO: token for oath, needs to be generated and maybe saved???
     # right now it can be manually generated in instructure -> account -> settings -> new access token
-    API_KEY = "7236~IY5j1h2ukZT0zfZUjIDoFXDDXYaLbm68ySDAXvVrxUEtH8pWJHyg9BV7f5HZ58zE"
+    API_KEY = "7236~nLF5rA32uWbike4xUq7gtYwjsK3HhM6fgStB2FJhv6uEb6NyCjXsC83gkeaUtmlc"
     
     # gets current user information
     user_id_url = API_URL + "/api/v1/users/self"
@@ -147,17 +147,33 @@ def main():
 
     formattedAssignments = []
     for course in course_list:
-        currentCourseID = course['id']
-        currentCourseName = course['name']
-        for assignment in course['assignments']:
-            assignmentDict = {
-                'name': assignment['name'],
-                'id': assignment['id'],
-                'due_at': assignment['due_at'],
-                'course_id': currentCourseID,
-                'course_name': currentCourseName,
-            }
-            formattedAssignments.append(assignmentDict)
+            currentCourseID = course['id']
+            currentCourseName = course['name']
+            for assignment in course['assignments']:
+                if assignment['due_at'] != None:
+                    suggested_time = {}
+                    suggested_time["due_date"] = datetime.datetime.strptime(assignment['due_at'], '%Y-%m-%dT%H:%M:%SZ').date()
+                    suggested_time["today"] = datetime.date.today()
+                    suggested_time["days_left"] = suggested_time["due_date"] - suggested_time["today"]
+                    if course['current_score'] == None:
+                        course['current_score'] = 1;
+                    if course['current_score'] != 0 and suggested_time['days_left'].days > 0:
+                        priority = assignment['points_possible']/course['current_score']/suggested_time['days_left'].days
+                    elif suggested_time['days_left'].days == 0:
+                        priority = assignment['points_possible']/course['current_score']
+                    else:
+                        priority = 0;
+                    assignmentDict = {
+                        'name': assignment['name'],
+                        'id': assignment['id'],
+                        'due_at': assignment['due_at'],
+                        'course_id': currentCourseID,
+                        'course_name': currentCourseName,
+                        'points_possible': assignment['points_possible'],
+                        'current_course_score': course['current_score'],
+                        'priority': priority,
+                    }
+                    formattedAssignments.append(assignmentDict)
 
     ########
     # Get all assignments where the due date has not passed
@@ -169,7 +185,7 @@ def main():
         if assignment['due_at'] != None:
             if assignment['due_at'] > now:
                 assignmentsDueAfterNow.append(assignment)
-    assignmentsDueAfterNow.sort(key = lambda i: i['due_at'])
+    assignmentsDueAfterNow.sort(key = lambda i: i['priority'], reverse=True)
 
     #######
     # Create email message
@@ -189,25 +205,28 @@ def main():
             assignment['course_name'] + ': ' +
             assignment['name'] + ', Due: ' +
             str(ourDate.month) + '/' +
-            str(ourDate.day)
+            str(ourDate.day - 1)
+            #'Priority: ' + str(assignment['priority'])
         )
         #now = datetime.datetime.strptime(str(now), '%Y-%m-%dT%H:%M:%S.%fZ').date()
         threeDayDifference = datetime.timedelta(days=3)
-        if ourDate < (datetime.date.today() + datetime.timedelta(days=3)):
+        if ourDate <= (datetime.date.today() + datetime.timedelta(days=3)):
             dueIn3Days += (assignmentString + '\n')
-        if ourDate < (datetime.date.today() + datetime.timedelta(days=7)):
+        if ourDate <= (datetime.date.today() + datetime.timedelta(days=7)):
             dueIn1Week += (assignmentString + '\n')
         masterAssignmentString += (assignmentString + '\n')
 
     
 
     message = (
+        'Good morning! Here\'s your Canvas Digest sorted by what we think you should work on first.\n\n' + 
         'Due in the next three days: \n' +
         dueIn3Days + '\n' +
         'Due in the next week: \n' +
         dueIn1Week + '\n' +
         'All: \n' + 
-        masterAssignmentString
+        masterAssignmentString +
+        '\nGood luck!'
     )
 
 
