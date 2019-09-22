@@ -44,12 +44,13 @@ def main():
 	
 	# TODO: token for oath, needs to be generated and maybe saved???
 	# right now it can be manually generated in instructure -> account -> settings -> new access token
-	API_KEY = "7236~IY5j1h2ukZT0zfZUjIDoFXDDXYaLbm68ySDAXvVrxUEtH8pWJHyg9BV7f5HZ58zE"
+	API_KEY = "7236~zpdoxbgCS2bc5ZrrS8E6WDVpWkuTVbgFO0ADvZ5mU1k113C8jbBqdgPswDjTbu74"
 	
 	# gets current user information
 	user_id_url = API_URL + "/api/v1/users/self"
 	r = requests.get(url = user_id_url, headers={'Authorization': 'Bearer '+ API_KEY})
 	user_data = r.json()
+
 	
 	# gets course list
 	courses_url = API_URL + "/api/v1/courses"
@@ -57,20 +58,32 @@ def main():
 	#r = requests.get(url = courses_url, headers={'Authorization': 'Bearer '+ API_KEY})
 	courses_data = get_all_request(courses_url, API_KEY, course_params)
 	
+	enrollments_url = API_URL + "/api/v1/users/" + str(user_data.get("id")) + "/enrollments"
+	enrollments_data = get_all_request(enrollments_url, API_KEY)
 	course_list = []
 	
 	# TODO: automate term_id
 	enrollment_term_ids = [1,92]
 	
-	# creates a dictionary of courses and ids
+	# creates a dictionary of courses and ids by filtering based on enrollment_term
 	for course in courses_data:
+		current_score = None
+		final_score = None
 		course_entry = {}
 		name = course.get("name")
+		id = course.get("id")
 		if name is not None:
+			for enrollment in enrollments_data:
+				if(enrollment.get("course_id") == id):
+					current_score = enrollment.get("grades").get("current_score")
+					final_score = enrollment.get("grades").get("final_score")
+
 			#print(course.get("enrollment_term_id"))
 			if(course.get("enrollment_term_id") in enrollment_term_ids):
-				course_entry["id"] = course.get("id")
+				course_entry["id"] = id
 				course_entry["name"] = name
+				course_entry["current_score"] = current_score
+				course_entry["final_score"] = final_score
 				course_list.append(course_entry)
 				
 	# prints out all assignments for a given course
@@ -78,17 +91,23 @@ def main():
 	for course in course_list:
 		course_id = course.get("id")
 		course_name = course.get("name")
+		
 		assignment_list = []
 		#print(course_name)
 		assignments_url = API_URL + "/api/v1/courses/" + str(course_id) + "/assignments"
 		assignments_data = get_all_request(assignments_url, API_KEY)
-
+		
+		
+		
 		for assignment in assignments_data:
 			assignment_entry = {}
 			assignment_entry["id"] = assignment.get("id")
 			assignment_entry["name"] = assignment.get("name")
 			assignment_entry["due_at"] = assignment.get("due_at")
+			assignment_entry["created_at"] = assignment.get("created_at")
+			assignment_entry["points_possible"] = assignment.get("points_possible")
 			assignment_list.append(assignment_entry)
+			
 			#print("\t" + assignment.get("name"))
 			#if(assignment.get("due_at") is not None):
 				#print("\t\t" + assignment.get("due_at"))
