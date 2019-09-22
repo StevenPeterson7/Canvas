@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<style>
+body {
+  background-color: #c7ba85;
+  color: #785b43;
+  font-family: verdana;
+}
+
+h1 {
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-size: 12px;
+}
+
+div {
+	background-color: #c8ffec;
+	width: 75%;
+	left: 12%;
+	margin-left: -50px;
+	padding: 10px;
+	border-radius: 25px;
+}
+
+#assignmentList {
+	float: center;
+	position: absolute;
+	top: 200px;
+	min-height: 300px;
+}
+
+#buttons {
+	margin-top: 30px;
+	padding: 10px;
+	float: center;
+	position: absolute;
+	top: 100px;
+}
+
+#header {
+	padding: 10px;
+	float: center;
+	position: absolute;
+}
+	
+submit {
+	float: center;
+	margin: 5px;
+}
+
+footer {
+	position: bottom;
+}
+
+#right-button {
+	float: right;
+}
+#mid-button {
+	float: right;
+}
+#left-button {
+	float: left;
+}
+</style>
+<html lang="en">
+    <head>
+		<meta charset = "UTF-8">
+		<title>Canvas2Calendar</title>
+		<link rel = "stylesheet"
+			type = "text/css"
+			href = "stylesheet.css" />
+    </head>
+    <body>
+	<div id="header">
+		<h1>Canvas2Calendar</h1>
+	</div>
+	<div id="buttons">
+		<form action="assignments" id = "left-button" method="post">
+			<input type="submit" value="Get my Assignments"/>
+		</form>
+		<form action="email" id = "mid-button" method="post">
+			<input type="submit"  value="Get this in an email"/>
+		</form>
+		<a href="http://127.0.0.1:8080/my.ics" download><button id = "right-button" hidden='hidden' >Download this as a calendar (.ics) file</button></a>
+	</div>
+	<div id='assignmentList'>
+		<p> Assignment list will go here </p>
+	</div>
+    </body>
+    <footer>
+
+    </footer>
+</html>

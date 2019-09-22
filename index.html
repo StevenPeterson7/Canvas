@@ -1,4 +1,69 @@
 <!DOCTYPE html>
+<style>
+body {
+  background-color: #c7ba85;
+  color: #785b43;
+  font-family: verdana;
+}
+
+h1 {
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-size: 12px;
+}
+
+div {
+	background-color: #c8ffec;
+	width: 75%;
+	left: 12%;
+	margin-left: -50px;
+	padding: 10px;
+	border-radius: 25px;
+}
+
+#assignmentList {
+	float: center;
+	position: absolute;
+	top: 200px;
+	min-height: 300px;
+}
+
+#buttons {
+	margin-top: 30px;
+	padding: 10px;
+	float: center;
+	position: absolute;
+	top: 100px;
+}
+
+#header {
+	padding: 10px;
+	float: center;
+	position: absolute;
+}
+	
+submit {
+	float: center;
+	margin: 5px;
+}
+
+footer {
+	position: bottom;
+}
+
+#right-button {
+	float: right;
+}
+#mid-button {
+	float: right;
+}
+#left-button {
+	float: left;
+}
+</style>
 <html lang="en">
     <head>
 		<meta charset = "UTF-8">
@@ -12,12 +77,33 @@
 		<h1>Canvas2Calendar</h1>
 	</div>
 	<div id="buttons">
-		<button type="button">Get my Assignments</button>
-		<button type="button" class="right-button">Get this in an email</button>
-		<button type="button" class="right-button">Download this as a calendar (.ics) file</button>
-	</div>
+		<form action="assignments" id = "left-button" method="post">
+			<input type="submit" value="Get my Assignments"/>
+		</form>
+		<form action="email" id = "mid-button" method="post">
+			<input type="submit"  value="Get this in an email"/>
+		</form>
+<a href='http://127.0.0.1:8080/my.ics' download><button id = 'right-button' >Download this as a calendar (.ics) file</button></a>	</div>
 	<div id='assignmentList'>
-		<p>Here's where your assignments will appear</p>
+<li>EEE 202: Circuits I (2019 Fall): HW Assignment #4, Due: 9/22</li>
+<li>CSE 310: Data Structures and Algorithms (2019 Fall): Assignment #2, Due: 9/23</li>
+<li>CSE 310: Data Structures and Algorithms (2019 Fall): Recitation 3, Due: 9/24</li>
+<li>CSE 310: Data Structures and Algorithms (2019 Fall): Recitation 4, Due: 9/27</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 3 (September 16-20), Due: 9/27</li>
+<li>EEE 202: Circuits I (2019 Fall): Mid-Term Exam #1, Due: 9/29</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 4A (September 23-27), Due: 10/4</li>
+<li>MAT 343: Applied Linear Algebra (2019 Fall): LAB 3 Materials& Assigments, Due: 10/4</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 4B (September 30 - October 4), Due: 10/11</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 5 (October 7-11), Due: 10/25</li>
+<li>MAT 343: Applied Linear Algebra (2019 Fall): LAB 4 Materials & Assignments, Due: 10/25</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 6 (October 21-25), Due: 11/1</li>
+<li>EEE 202: Circuits I (2019 Fall): Mid-Term Exam #2, Due: 11/3</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 7 (October 28 - November 1), Due: 11/8</li>
+<li>MAT 343: Applied Linear Algebra (2019 Fall): LAB 5 Materials & Assignments, Due: 11/8</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 8 (November 4-8), Due: 11/22</li>
+<li>MAT 343: Applied Linear Algebra (2019 Fall): LAB 6 Materals & Assigments, Due: 11/29</li>
+<li>EEE 202: Circuits I (2019 Fall): Lab 9 (November 18-22), Due: 12/6</li>
+<li>EEE 202: Circuits I (2019 Fall): Final Exam, Due: 12/12</li>
 	</div>
     </body>
     <footer>

@@ -1,13 +1,9 @@
 #!/usr/bin/env python 
 
-from __future__ import print_function
-import smtplib, ssl
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import json
 import requests
 import datetime
-import os.path
+import os
 import sys
 
 def get_all_request(url, token, parameters=None):
@@ -16,14 +12,14 @@ def get_all_request(url, token, parameters=None):
     links["next"]=url
     while(links["next"] is not None):
         r = requests.get(url = links["next"], params = parameters, headers={'Authorization': 'Bearer '+ token})
-	#print(r.url)
+    #print(r.url)
         data = r.json()
         headers = r.headers
         links = class_str_to_dict(r.headers.get("link"))
         for d in data:
             final_list.append(d)
         return final_list
-	
+    
 def class_str_to_dict(string):
     class_dict = {"current":None, "next":None, "prev":None, "first":None, "last":None}
     for s in range(len(string)):
@@ -43,6 +39,27 @@ def class_str_to_dict(string):
     return class_dict
 
 
+def html_list_from_string(string):
+    #os.rename("index.html", "~index.html")
+    old_file = open("~index.html", "r")
+    new_file = open("index.html", "w")
+
+    line = old_file.readline()
+    while line:
+        if("<div id='assignmentList'>" in line):
+            new_file.write(line)
+            for assignment in string.split("\n"):
+                if(len(assignment)>1):
+                    new_file.write("<li>" + assignment + "</li>\n")
+            old_file.readline()
+        elif("hidden='hidden'" in line):
+            new_file.write("<a href='http://127.0.0.1:8080/my.ics' download><button id = 'right-button' >Download this as a calendar (.ics) file</button></a>")
+        else:
+            new_file.write(line)
+        line = old_file.readline()
+    new_file.close()
+    old_file.close()
+    
 def main():
 
     ##########
@@ -134,10 +151,10 @@ def main():
     # id = course_id
     # name = course_name
     # assignment = list of dictionaries, each one representing an assignment
-    # 		each assignment has an id, name and due_at
-    # 		id = assignment_id
-    # 		name = assignment_name
-    # 		due_at = due date
+    #       each assignment has an id, name and due_at
+    #       id = assignment_id
+    #       name = assignment_name
+    #       due_at = due date
 
     #print(course_list)
 
@@ -176,31 +193,15 @@ def main():
                         'priority': priority,
                     }
                     formattedAssignments.append(assignmentDict)
-
-    ########
-    # Get all assignments where the due date has not passed
-    ########
-
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     assignmentsDueAfterNow = []
     for assignment in formattedAssignments:
         if assignment['due_at'] != None:
             if assignment['due_at'] > now:
                 assignmentsDueAfterNow.append(assignment)
-    assignmentsDueAfterNow.sort(key = lambda i: i['priority'], reverse=True)
-
-    #######
-    # Create email message
-    #######
-    
-    msg = MIMEMultipart()
-    msg['From'] = 'Canvas2Calendar@gmail.com'
-    msg['To'] = 'kenna@zimfam.org'
-    msg['Subject'] = 'Your Daily Canvas Digest'
-
+    assignmentsDueAfterNow.sort(key = lambda i: i['due_at'], reverse=False)
+    #print(assignmentsDueAfterNow)
     masterAssignmentString = ''
-    dueIn3Days = ''
-    dueIn1Week = ''
     for assignment in assignmentsDueAfterNow:
         ourDate = datetime.datetime.strptime(assignment['due_at'], '%Y-%m-%dT%H:%M:%SZ').date()
         assignmentString = (
@@ -211,46 +212,8 @@ def main():
             #'Priority: ' + str(assignment['priority'])
         )
         #now = datetime.datetime.strptime(str(now), '%Y-%m-%dT%H:%M:%S.%fZ').date()
-        threeDayDifference = datetime.timedelta(days=3)
-        if ourDate <= (datetime.date.today() + datetime.timedelta(days=3)):
-            dueIn3Days += (assignmentString + '\n')
-        if ourDate <= (datetime.date.today() + datetime.timedelta(days=7)):
-            dueIn1Week += (assignmentString + '\n')
         masterAssignmentString += (assignmentString + '\n')
-
-    
-
-    message = (
-        'Good morning! Here\'s your Canvas Digest sorted by what we think you should work on first.\n\n' + 
-        'Due in the next three days: \n' +
-        dueIn3Days + '\n' +
-        'Due in the next week: \n' +
-        dueIn1Week + '\n' +
-        'All: \n' + 
-        masterAssignmentString +
-        '\nGood luck!'
-    )
-
-
-
-
-    msg.attach(MIMEText(message))
-
-    #######
-    # Send the email
-    #######
-
-
-    port = 465  # For SSL
-    #password = input("Type your password and press enter: ")
-
-    # Create a secure SSL context
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login("canvas2calendar@gmail.com", 'sunhacks!2019')
-        server.send_message(msg)
-
+    html_list_from_string(masterAssignmentString)
 
 
 

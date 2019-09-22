@@ -43,7 +43,7 @@ div {
 	position: absolute;
 }
 	
-button {
+submit {
 	float: center;
 	margin: 5px;
 }
@@ -52,6 +52,12 @@ footer {
 	position: bottom;
 }
 
-.right-button {
+#right-button {
 	float: right;
+}
+#mid-button {
+	float: right;
+}
+#left-button {
+	float: left;
 }
